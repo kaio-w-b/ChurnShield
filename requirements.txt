@@ -1,0 +1,58 @@
+# ============================================================
+# ChurnShield AI — Requirements
+# ============================================================
+
+# --- Core Data Science ---
+numpy==1.26.4
+pandas==2.2.2
+scipy==1.13.0
+
+# --- Machine Learning ---
+scikit-learn==1.4.2
+xgboost==2.0.3
+lightgbm==4.3.0
+catboost==1.2.5
+imbalanced-learn==0.12.2     # SMOTE para classes desbalanceadas
+optuna==3.6.1                # Hyperparameter tuning bayesiano
+
+# --- Explicabilidade ---
+shap==0.45.0
+lime==0.2.0.1
+
+# --- MLOps ---
+mlflow==2.12.2
+great-expectations==0.18.15  # Validação de dados
+
+# --- API ---
+fastapi==0.110.2
+uvicorn[standard]==0.29.0
+pydantic==2.7.1
+python-multipart==0.0.9
+
+# --- Visualização ---
+matplotlib==3.8.4
+seaborn==0.13.2
+plotly==5.21.0
+kaleido==0.2.1               # Export plotly p/ imagem
+
+# --- Utilitários ---
+python-dotenv==1.0.1
+pyyaml==6.0.1
+loguru==0.7.2
+rich==13.7.1                 # Beautiful terminal output
+tqdm==4.66.2
+joblib==1.4.0
+click==8.1.7
+
+# --- Qualidade de Código ---
+pytest==8.2.0
+pytest-cov==5.0.0
+pytest-asyncio==0.23.6
+httpx==0.27.0                # Para testar endpoints FastAPI
+ruff==0.4.4                  # Linting ultrarrápido
+black==24.4.2
+pre-commit==3.7.1
+
+# --- Notebooks ---
+jupyterlab==4.1.8
+ipywidgets==8.1.2

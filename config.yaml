@@ -1,0 +1,176 @@
+# ============================================================
+# ChurnShield AI — Configuração Central
+# ============================================================
+
+project:
+  name: ChurnShield AI
+  version: "1.0.0"
+  description: Advanced Customer Churn Prediction Platform
+  author: Data Science Team
+
+# --- Caminhos ---
+paths:
+  data_raw: data/raw/
+  data_processed: data/processed/
+  data_external: data/external/
+  models: models/
+  reports: reports/
+  figures: reports/figures/
+  mlruns: mlruns/
+
+# --- Dados ---
+data:
+  target_column: churn
+  test_size: 0.2
+  validation_size: 0.1
+  random_state: 42
+  stratify: true
+
+  # Colunas por tipo
+  categorical_features:
+    - contract_type
+    - payment_method
+    - internet_service
+    - gender
+    - partner
+    - dependents
+    - phone_service
+    - multiple_lines
+    - online_security
+    - online_backup
+    - device_protection
+    - tech_support
+    - streaming_tv
+    - streaming_movies
+    - paperless_billing
+
+  numerical_features:
+    - tenure
+    - monthly_charges
+    - total_charges
+    - num_products
+    - avg_monthly_charges
+    - charge_per_product
+    - tenure_months_squared
+    - charges_tenure_ratio
+
+  drop_columns:
+    - customer_id
+
+# --- Feature Engineering ---
+features:
+  create_polynomial: true
+  polynomial_degree: 2
+  create_interactions: true
+  handle_outliers: true
+  outlier_method: iqr          # iqr ou zscore
+  outlier_threshold: 1.5
+  
+  # SMOTE para balancear classes
+  balance_strategy: smote
+  smote_k_neighbors: 5
+
+# --- Modelos ---
+models:
+  baseline:
+    name: logistic_regression
+    params:
+      C: 1.0
+      max_iter: 1000
+      random_state: 42
+
+  xgboost:
+    name: xgboost
+    params:
+      n_estimators: 500
+      max_depth: 6
+      learning_rate: 0.05
+      subsample: 0.8
+      colsample_bytree: 0.8
+      reg_alpha: 0.1
+      reg_lambda: 1.0
+      random_state: 42
+      eval_metric: auc
+      early_stopping_rounds: 50
+
+  lightgbm:
+    name: lightgbm
+    params:
+      n_estimators: 500
+      num_leaves: 63
+      learning_rate: 0.05
+      feature_fraction: 0.8
+      bagging_fraction: 0.8
+      bagging_freq: 5
+      reg_alpha: 0.1
+      reg_lambda: 0.1
+      random_state: 42
+      verbose: -1
+
+  catboost:
+    name: catboost
+    params:
+      iterations: 500
+      depth: 6
+      learning_rate: 0.05
+      l2_leaf_reg: 3
+      random_seed: 42
+      verbose: 0
+
+  ensemble:
+    name: voting_classifier
+    estimators:
+      - xgboost
+      - lightgbm
+      - catboost
+    voting: soft
+    weights: [1, 1.2, 1]      # LightGBM ligeiramente favorecido
+
+# --- Otimização de Hiperparâmetros ---
+hyperopt:
+  enabled: true
+  n_trials: 100
+  timeout: 3600                # 1 hora máximo
+  direction: maximize
+  metric: roc_auc
+  n_jobs: -1
+
+# --- Avaliação ---
+evaluation:
+  primary_metric: roc_auc
+  secondary_metrics:
+    - f1_score
+    - precision
+    - recall
+    - average_precision
+  threshold: 0.5
+  cv_folds: 5
+  cv_strategy: stratified
+
+# --- MLflow ---
+mlflow:
+  tracking_uri: "http://localhost:5000"
+  experiment_name: churnshield_experiments
+  model_registry_name: ChurnShieldModel
+  artifact_location: mlruns/
+
+# --- API ---
+api:
+  host: "0.0.0.0"
+  port: 8000
+  workers: 4
+  reload: false
+  log_level: info
+
+  # Thresholds de risco
+  risk_thresholds:
+    low: 0.3
+    medium: 0.6
+    high: 0.8
+
+# --- Logging ---
+logging:
+  level: INFO
+  format: "{time:YYYY-MM-DD HH:mm:ss} | {level} | {name}:{function}:{line} | {message}"
+  rotation: "10 MB"
+  retention: "30 days"

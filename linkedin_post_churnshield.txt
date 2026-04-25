@@ -1,0 +1,50 @@
+🛡️ Construí um projeto COMPLETO de Data Science do zero — e estou compartilhando tudo.
+
+Depois de semanas trabalhando nas noites e fins de semana, finalizei o ChurnShield AI: uma plataforma de ponta a ponta para predição de churn de clientes com Machine Learning explicável.
+
+📊 O problema real que resolve:
+Empresas perdem bilhões todo ano por não saber QUEM está prestes a cancelar. Adquirir um novo cliente custa até 25x mais do que reter um existente. Identificar isso com antecedência muda o jogo.
+
+🔬 O que tem dentro do projeto:
+
+✅ Ingestão + validação automática de dados (Great Expectations)
+✅ Feature Engineering avançado: 34 features derivadas com conhecimento de domínio
+✅ 5 modelos treinados: Logistic Regression → XGBoost → LightGBM → CatBoost → Ensemble
+✅ Otimização bayesiana de hiperparâmetros com Optuna (100 trials)
+✅ SMOTE para balanceamento de classes
+✅ Explicabilidade com SHAP — sabe EXATAMENTE por que cada predição foi feita
+✅ MLflow para tracking completo de experimentos e model registry
+✅ API REST com FastAPI + validação Pydantic (predição individual e em lote)
+✅ Suite de testes com Pytest + 75%+ de cobertura
+✅ CI/CD com GitHub Actions
+✅ Docker + Docker Compose para deploy
+
+📈 Resultados do modelo campeão (Ensemble):
+• AUC-ROC: 0.884
+• F1-Score: 0.703
+• Precisão: 74.8%
+• Recall: 66.3%
+
+Mas o número que mais me orgulha? A API retorna em <50ms a probabilidade de churn + os 4 principais fatores de risco + ações de retenção recomendadas. Pronto para integrar em qualquer CRM.
+
+💡 O que aprendi construindo isso:
+
+A maioria dos projetos de DS morre no notebook. O diferencial está em:
+→ Código modular, testável, versionado
+→ Modelo explicável (negócio precisa entender o "por quê")
+→ MLOps desde o início, não como afterthought
+→ API que humanos de negócio conseguem usar
+
+🏗️ Stack técnica completa:
+Python · Scikit-learn · XGBoost · LightGBM · CatBoost · SHAP · MLflow · Optuna · FastAPI · Pydantic · Docker · GitHub Actions
+
+O projeto está 100% documentado com README, Makefile e comentários detalhados em cada módulo. Perfeito para aprendizado, portfólio ou como base para projetos reais.
+
+🔗 Link no primeiro comentário.
+
+Se você está construindo sua carreira em Data Science: projetos assim — completos, com código de produção, testados e documentados — valem 10x mais no portfólio do que 50 notebooks soltos no Kaggle.
+
+Salva esse post se curtiu 🔖
+Compartilha com alguém que está aprendendo Data Science 🚀
+
+#DataScience #MachineLearning #Python #MLOps #FastAPI #XGBoost #SHAP #MLflow #ChurnPrediction #PortifolioDados #DataScienceBrasil #CarreiraEmDados
