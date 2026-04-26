@@ -91,7 +91,6 @@ models:
       reg_lambda: 1.0
       random_state: 42
       eval_metric: auc
-      early_stopping_rounds: 50
 
   lightgbm:
     name: lightgbm
@@ -149,7 +148,7 @@ evaluation:
 
 # --- MLflow ---
 mlflow:
-  tracking_uri: "http://localhost:5000"
+  tracking_uri: "mlruns"
   experiment_name: churnshield_experiments
   model_registry_name: ChurnShieldModel
   artifact_location: mlruns/

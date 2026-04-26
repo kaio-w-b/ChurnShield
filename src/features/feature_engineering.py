@@ -51,13 +51,11 @@ class NumericalFeatureCreator(BaseEstimator, TransformerMixin):
         X["charges_vs_avg"] = X["monthly_charges"] / self.monthly_median_
 
         # Agrupamento de tenure
-        X["tenure_group"] = pd.cut(
-            X["tenure"],
-            bins=[0, 12, 24, 48, 72, np.inf],
-            labels=["0-12m", "12-24m", "24-48m", "48-72m", "72m+"],
-            right=True,
-        ).astype(str)
-
+        X["tenure_group"] = np.where(X["tenure"] <= 12, 0,
+                    np.where(X["tenure"] <= 24, 1,
+                    np.where(X["tenure"] <= 48, 2,
+                    np.where(X["tenure"] <= 72, 3, 4))))
+        
         # Score de valor do cliente (normalizado)
         X["customer_value_score"] = (
             (X["total_charges"] - X["total_charges"].min())
