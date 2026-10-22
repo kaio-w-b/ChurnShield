@@ -101,3 +101,7 @@ optuna.db
 *.bak
 *.swp
 .cache/
+# --- Artefatos de treino ---
+catboost_info/
+**/catboost_info/
+notebooks/data/
