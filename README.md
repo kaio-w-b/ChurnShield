@@ -1,9 +1,8 @@
 # 🛡️ ChurnShield AI
-### Advanced Customer Churn Prediction Platform with Explainable ML & MLOps
+### Predição de churn de clientes com Machine Learning explicável e API de serviço
 
 [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110-green.svg)](https://fastapi.tiangolo.com)
-[![MLflow](https://img.shields.io/badge/MLflow-2.12-orange.svg)](https://mlflow.org)
 [![SHAP](https://img.shields.io/badge/SHAP-0.45-red.svg)](https://shap.readthedocs.io)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -11,114 +10,94 @@
 
 ## 📌 Visão Geral
 
-**ChurnShield AI** é uma plataforma de ciência de dados de ponta a ponta para predição de churn (cancelamento) de clientes em empresas de telecomunicações. O projeto combina técnicas avançadas de Machine Learning com práticas modernas de MLOps para entregar predições confiáveis, interpretáveis e prontas para produção.
+**ChurnShield AI** é um projeto de ciência de dados de ponta a ponta para predição de churn (cancelamento) de clientes de telecomunicações: da análise exploratória ao treino de modelos de gradient boosting, explicabilidade com SHAP e uma API REST em FastAPI.
 
-> **Problema de negócio**: Adquirir um novo cliente custa entre 5x a 25x mais do que reter um existente. Identificar clientes em risco de churn com antecedência permite ações proativas de retenção, reduzindo perdas de receita significativamente.
+> **Problema de negócio**: adquirir um novo cliente custa entre 5x e 25x mais do que reter um existente. Identificar clientes em risco com antecedência permite ações proativas de retenção.
+
+> **Sobre os dados**: os notebooks usam um dataset **sintético** de 7.043 clientes e 21 colunas, gerado por `src/data/data_loader.py` a partir das distribuições do *Telco Customer Churn* (IBM Sample Data), com taxa de churn de 22,1%. Os resultados abaixo valem para esse dataset sintético.
 
 ---
 
-## 🏗️ Arquitetura do Projeto
+## 🏗️ Estrutura do Projeto
 
 ```
-churnshield/
-├── 📁 data/
-│   ├── raw/                    # Dados brutos (imutáveis)
-│   ├── processed/              # Dados processados e prontos para modelagem
-│   └── external/               # Dados externos (enriquecimento)
+ChurnShield/
+├── notebooks/
+│   ├── 01_eda.ipynb                     # Análise exploratória
+│   ├── 02_feature_engineering.ipynb     # Criação e seleção de features
+│   ├── 03_baseline_models.ipynb         # Dummy, Regressão Logística, Árvore, Random Forest
+│   ├── 04_advanced_models.ipynb         # XGBoost, LightGBM, CatBoost e Ensemble
+│   └── 05_model_explainability.ipynb    # SHAP (global e por cliente)
 │
-├── 📁 notebooks/
-│   ├── 01_eda.ipynb            # Análise Exploratória de Dados
-│   ├── 02_feature_engineering.ipynb
-│   ├── 03_baseline_models.ipynb
-│   ├── 04_advanced_models.ipynb
-│   └── 05_model_explainability.ipynb
+├── src/
+│   ├── data/data_loader.py              # Carga, geração sintética, split e hash dos dados
+│   ├── features/feature_engineering.py  # Pipeline de features e SMOTE
+│   ├── visualization/plots.py           # Gráficos reutilizáveis
+│   └── utils/helpers.py                 # Utilitários
 │
-├── 📁 src/
-│   ├── data/                   # Ingestão e validação de dados
-│   ├── features/               # Engenharia de features
-│   ├── models/                 # Treinamento e inferência
-│   ├── visualization/          # Geração de gráficos
-│   └── utils/                  # Utilitários gerais
-│
-├── 📁 api/                     # FastAPI — serviço de predição
-├── 📁 tests/                   # Testes unitários e de integração
-├── 📁 config/                  # Configurações do projeto
-├── 📁 reports/                 # Relatórios e figuras geradas
-├── 📁 mlruns/                  # Experimentos MLflow
-├── docker-compose.yml
+├── api/main.py                          # FastAPI: /predict, /predict/batch, /health, /model/info
+├── tests/test_churnshield.py            # Testes com Pytest
+├── config/config.yaml                   # Configuração central (caminhos, features, modelos)
+├── ci.yml                               # Pipeline de CI (lint, testes, build Docker)
+├── Dockerfile / docker-compose.yml
 ├── Makefile
 └── requirements.txt
 ```
 
 ---
 
-## 🎯 Features Técnicas
+## 🎯 Stack
 
 | Categoria | Tecnologias |
 |-----------|-------------|
-| **ML Framework** | Scikit-learn, XGBoost, LightGBM, CatBoost |
-| **Explicabilidade** | SHAP, LIME, Feature Importance |
-| **MLOps** | MLflow (tracking + model registry) |
+| **ML** | Scikit-learn, XGBoost, LightGBM, CatBoost, imbalanced-learn (SMOTE) |
+| **Explicabilidade** | SHAP |
 | **API** | FastAPI + Pydantic v2 |
-| **Validação de Dados** | Great Expectations, Pydantic |
-| **Testes** | Pytest, pytest-cov |
+| **Testes** | Pytest |
 | **Containerização** | Docker, Docker Compose |
-| **CI/CD** | GitHub Actions |
 | **Visualização** | Matplotlib, Seaborn, Plotly |
 
 ---
 
-## 🚀 Quick Start
+## 📊 Resultados (conjunto de teste, dataset sintético)
 
-### 1. Clone e configure o ambiente
+Valores registrados nas saídas dos notebooks `03_baseline_models` e `04_advanced_models`:
 
-```bash
-git clone https://github.com/seu-usuario/churnshield.git
-cd churnshield
-make setup
-```
+| Modelo | AUC-ROC | F1-Score |
+|--------|---------|----------|
+| Dummy (estratificado) | 0.496 | 0.301 |
+| **Regressão Logística** | **0.767** | **0.501** |
+| XGBoost | 0.747 | — |
+| CatBoost | 0.742 | — |
+| Random Forest | 0.743 | 0.381 |
+| LightGBM | 0.734 | — |
+| Ensemble (Voting soft + calibração) | 0.731 | — |
+| Decision Tree | 0.729 | 0.483 |
 
-### 2. Execute o pipeline completo
+**Leitura dos resultados**
 
-```bash
-# Processar dados
-make data
-
-# Treinar modelos (com tracking MLflow)
-make train
-
-# Avaliar e gerar relatório
-make evaluate
-
-# Subir a API de predição
-make api
-```
-
-### 3. Acesse os serviços
-
-| Serviço | URL |
-|---------|-----|
-| 🔮 API de Predição | http://localhost:8000 |
-| 📊 MLflow UI | http://localhost:5000 |
-| 📖 API Docs (Swagger) | http://localhost:8000/docs |
+* Todos os modelos superam com folga a referência aleatória (AUC ≈ 0.50).
+* A Regressão Logística teve o melhor AUC no teste. Os modelos de boosting e o ensemble não trouxeram ganho neste dataset, o que é coerente com dados sintéticos gerados a partir de relações majoritariamente lineares.
+* Nos notebooks, a validação cruzada dos modelos de boosting (AUC ≈ 0.93) foi feita sobre os dados já balanceados com SMOTE, o que infla o resultado. A métrica confiável é a do conjunto de teste. A correção está no roadmap.
 
 ---
 
-## 📊 Resultados do Modelo
+## 🔍 Explicabilidade
 
-| Modelo | AUC-ROC | F1-Score | Precisão | Recall |
-|--------|---------|----------|----------|--------|
-| Logistic Regression (baseline) | 0.782 | 0.581 | 0.634 | 0.537 |
-| Random Forest | 0.841 | 0.643 | 0.701 | 0.594 |
-| XGBoost | 0.867 | 0.672 | 0.723 | 0.628 |
-| LightGBM | 0.871 | 0.681 | 0.731 | 0.638 |
-| **Ensemble (Voting)** | **0.884** | **0.703** | **0.748** | **0.663** |
+O notebook `05_model_explainability` usa SHAP `TreeExplainer` para:
 
-> 🏆 **Modelo campeão**: Ensemble com Voting Classifier (LightGBM + XGBoost + CatBoost)
+* importância global das features (summary plot);
+* explicação individual de um cliente de alto risco (force plot);
+* conclusão principal: o tipo de contrato (`contract_risk`) é o preditor mais forte, e o tempo de casa (`tenure`) tem efeito protetor.
 
 ---
 
-## 🔮 Exemplo de Uso da API
+## 🔮 API de Predição
+
+```bash
+make api            # ou: uvicorn api.main:app --reload
+# Swagger: http://localhost:8000/docs
+```
 
 ```python
 import requests
@@ -130,46 +109,49 @@ payload = {
     "contract_type": "Month-to-month",
     "payment_method": "Electronic check",
     "internet_service": "Fiber optic",
-    "num_products": 3,
-    "has_tech_support": False,
-    "has_online_security": False
+    # ... demais campos do schema CustomerFeatures
 }
 
 response = requests.post("http://localhost:8000/predict", json=payload)
 print(response.json())
-# {
-#   "churn_probability": 0.847,
-#   "prediction": "HIGH_RISK",
-#   "confidence": "HIGH",
-#   "top_risk_factors": ["Month-to-month contract", "No online security", "High monthly charges"],
-#   "recommended_actions": ["Offer annual contract discount", "Bundle security package"]
-# }
+# churn_probability, risk_level, top_risk_factors, recommended_actions
 ```
+
+> ⚠️ **Status atual**: a API ainda não carrega o modelo treinado. O endpoint `/predict` usa uma regra de pontuação baseada nos fatores de risco encontrados na EDA e no SHAP, para demonstrar o contrato da API (schema, validação, níveis de risco e ações de retenção). Servir o modelo treinado é o próximo passo do roadmap.
 
 ---
 
-## 📈 Pipeline de Dados
-
-```
-Raw Data → Validation → Cleaning → Feature Engineering → Feature Selection → Train/Test Split
-    ↓
-Model Training → Hyperparameter Tuning → Ensemble → Evaluation → MLflow Registry
-    ↓
-Model Serving (FastAPI) → Monitoring → Retraining Trigger
-```
-
----
-
-## 🧪 Executar Testes
+## 🚀 Como Executar
 
 ```bash
-make test
-# ou
-pytest tests/ -v --cov=src --cov-report=html
+git clone https://github.com/kaio-w-b/ChurnShield.git
+cd ChurnShield
+make setup          # cria a venv e instala as dependências
+
+# Notebooks (gera o dataset sintético na primeira execução)
+jupyter notebook notebooks/
+
+# Testes
+make test           # ou: pytest tests/ -v
 ```
 
 ---
+
+## 🗺️ Roadmap
+
+* [ ] Treinar com o dataset real *Telco Customer Churn* e comparar com o sintético
+* [ ] Aplicar SMOTE dentro de cada fold (`imblearn.pipeline.Pipeline`) para uma validação cruzada sem vazamento
+* [ ] Salvar o melhor modelo e servi-lo na API no lugar da regra de demonstração
+* [ ] Rastrear experimentos e registrar o modelo com MLflow
+* [ ] Ativar o CI movendo `ci.yml` para `.github/workflows/`
+* [ ] Ajuste de hiperparâmetros com Optuna
+
+---
+
+## 👨‍💻 Autor
+
+**Kaio Wellington Batista e Silva** · [GitHub](https://github.com/kaio-w-b) · [LinkedIn](https://www.linkedin.com/in/kaiowellinghton)
 
 ## 📄 Licença
 
-MIT License — veja [LICENSE](LICENSE) para detalhes.
+MIT License — veja [LICENSE](LICENSE).
